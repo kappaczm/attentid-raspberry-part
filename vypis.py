@@ -96,13 +96,13 @@ async def scan_and_send():
                 print(f"📱 Zařízení {device.address} typu: {', '.join(device_types)}")
 
                 try:
-                    # Read and display the fixed UUID
+                    # Read and display the raspberry UUID
                     folder_path = os.path.join(os.getcwd(), "raspberry_uuid")
                     file_path = os.path.join(folder_path, "uuid.txt")
                     if os.path.exists(file_path):
                         with open(file_path, "r") as file:
-                            fixed_uuid = file.read().strip()
-                        print(f"Fixed UUID: {fixed_uuid}")
+                            raspberry_uuid = file.read().strip()
+                        print(f"Raspberry UUID: {raspberry_uuid}")
                     else:
                         print("UUID file not found.")
 
