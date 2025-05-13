@@ -81,5 +81,44 @@ async def example_usage():
     for device in matched:
         print(f"Matched device: {device}")
 
+import json
+from mqttportabo import send_payload
+
+async def process_ble_message(message, comparator):
+    """
+    Processes a BLE message, compares the MAC address, and sends the UUID via MQTT if matched.
+    """
+    mac_address = message.get("mac")
+    uuid = message.get("uuid")
+
+    if not mac_address or not uuid:
+        print("❌ Invalid BLE message: Missing MAC or UUID")
+        return
+
+    # Add the device to source1 for comparison
+    comparator.add_device_source1(mac_address, {"uuid": uuid})
+
+    # Check for matches
+    matched_devices = comparator.get_matched_devices()
+    for device in matched_devices:
+        try:
+            payload = {"uuid": device["source1_data"]["uuid"]}
+            send_payload("verified_devices", payload)
+            print(f"📤 Sent UUID: {payload['uuid']} for MAC: {device['mac']}")
+        except Exception as e:
+            print(f"❌ Error sending UUID: {e}")
+
+# Example usage with BLE message processing
+async def example_usage():
+    comparator = DeviceComparator(match_window_seconds=30)
+
+    # Simulated BLE message
+    ble_message = {
+        "mac": "00:11:22:33:44:55",
+        "uuid": "0000180f-0000-1000-8000-00805f9b34fb"
+    }
+
+    await process_ble_message(ble_message, comparator)
+
 if __name__ == "__main__":
     asyncio.run(example_usage())
