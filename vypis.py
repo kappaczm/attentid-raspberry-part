@@ -76,11 +76,11 @@ async def scan_and_send():
 
         try:
             print("🔍 Spouštím BLE skenování...")
-            devices = await BleakScanner.discover(timeout=5.0)  # Zkrácení doby skenování na 5 sekund
+            devices = await BleakScanner.discover(timeout=10.0)  # Zkrácení doby skenování na 5 sekund
 
             if not devices:
                 print("❌ Nenalezena žádná BLE zařízení.")
-                await asyncio.sleep(60)  # Zvýšení intervalu čekání na 60 sekund
+                await asyncio.sleep(30)  # Zvýšení intervalu čekání na 60 sekund
                 continue
 
             print(f"✅ Nalezeno {len(devices)} zařízení")
@@ -106,16 +106,16 @@ async def scan_and_send():
                     else:
                         print("UUID file not found.")
 
-                    send_payload("ble_devices", payload)
+                    send_payload("ble_devices/"+device.address, payload)
                     print(f"📤 Odesláno: {device.address}")
                 except Exception as e:
                     print(f"❌ Chyba při odesílání dat: {e}")
 
-            await asyncio.sleep(60)  # Zvýšení intervalu čekání na 60 sekund
+            await asyncio.sleep(30)  # Zvýšení intervalu čekání na 60 sekund
 
         except Exception as e:
             print(f"❌ Chyba při skenování: {e}")
-            await asyncio.sleep(5)  # Počkáme před dalším pokusem
+            await asyncio.sleep(10)  # Počkáme před dalším pokusem
 
 if __name__ == "__main__":
     print("🚀 Spouštím BLE monitoring...")

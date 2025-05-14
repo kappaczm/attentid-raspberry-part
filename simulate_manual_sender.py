@@ -5,7 +5,7 @@ def send_manual_message():
     Simulate sending a message with a predefined MAC address.
     """
     # Predefined MAC address
-    mac_address = "6F:C5:19:59:59:DA"
+    mac_address = "F4:83:A4:E9:40:D5"
 
     # Create the message
     message = {"mac": mac_address}
