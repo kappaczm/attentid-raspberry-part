@@ -1,6 +1,8 @@
 from utils import handle_incoming_message
+from ble_utils import get_nearby_mac_addresses
 
 import re
+from bleak import BleakScanner
 
 async def get_nearby_mac_addresses():
     """Retrieve a list of nearby MAC addresses using BLE scanning."""

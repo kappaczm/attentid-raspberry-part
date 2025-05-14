@@ -1,8 +1,9 @@
 import asyncio
 import re
-from porovnani import get_nearby_mac_addresses
+# Removed circular import
 
 def handle_incoming_message(message):
+    from porovnani import get_nearby_mac_addresses  # Lazy import to avoid circular dependency
     """
     Handle an incoming message by extracting the MAC address,
     comparing it with nearby MAC addresses, and outputting the result.
