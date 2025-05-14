@@ -46,8 +46,10 @@ def handle_incoming_message(message):
         print(f"Error handling the message: {e}")
 
 # Example usage
-from simulate_manual_sender import send_manual_message
+from prijimac import handle_message
+# Example usage
+# Removed reference to simulate_manual_sender
 
 if __name__ == "__main__":
     # Simulate sending a manual message
-    send_manual_message()
+# Removed unused reference to simulate_manual_sender
