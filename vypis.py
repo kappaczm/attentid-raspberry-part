@@ -2,6 +2,11 @@ import asyncio
 from bleak import BleakScanner
 from mqttportabo import send_payload
 import time
+from prijimac import handle_message
+
+# Dynamically retrieve uuid_uzivatele from prijimac.py
+from prijimac import uuid_uzivatele
+from porovnani import handle_incoming_message
 import os
 from datetime import datetime
 
@@ -43,6 +48,15 @@ def get_manufacturer_info(manufacturer_data):
     for key, value in manufacturer_data.items():
         manufacturer_info.append(manufacturer_mapping.get(key, f"Unknown Manufacturer (ID: {key})"))
     return manufacturer_info
+
+ # Read and display the raspberry UUID
+folder_path = os.path.join(os.getcwd(), "raspberry_uuid")
+file_path = os.path.join(folder_path, "uuid.txt")
+if os.path.exists(file_path):
+    with open(file_path, "r") as file:
+        raspberry_uuid = file.read().strip()
+else:
+    print("UUID file not found.")
 
 def get_device_type(uuids):
     """Zjistí typ zařízení podle UUID"""
@@ -95,19 +109,22 @@ async def scan_and_send():
                 device_types = device_data["device_types"]
                 print(f"📱 Zařízení {device.address} typu: {', '.join(device_types)}")
 
-                try:
-                    # Read and display the raspberry UUID
-                    folder_path = os.path.join(os.getcwd(), "raspberry_uuid")
-                    file_path = os.path.join(folder_path, "uuid.txt")
-                    if os.path.exists(file_path):
-                        with open(file_path, "r") as file:
-                            raspberry_uuid = file.read().strip()
-                        print(f"Raspberry UUID: {raspberry_uuid}")
-                    else:
-                        print("UUID file not found.")
+                # Call handle_incoming_message to compare MAC addresses
+                # Normalize MAC address formats
+                def normalize_mac(mac):
+                    return re.sub(r'[^A-Fa-f0-9]', '', mac).upper()
 
-                    send_payload("ble_devices/"+device.address, payload)
-                    print(f"📤 Odesláno: {device.address}")
+                normalized_mac = normalize_mac(device.address)
+                normalized_nearby_macs = [normalize_mac(mac) for mac in [d.address for d in devices]]
+
+                try:
+                    # Compare the MAC address with the nearby list
+                    if normalized_mac in normalized_nearby_macs:
+                        send_payload("ble_devices/"+raspberry_uuid+"/"+device.address+"/overenaadresa/"+uuid_uzivatele, payload)
+                        print(f"✅ Odesláno zařízení {device.address} na MQTT broker ale overeny:")
+                    else:
+                        send_payload("ble_devices/"+raspberry_uuid+"/"+device.address, payload)
+                        print(f"✅ Odesláno zařízení {device.address} na MQTT broker.")
                 except Exception as e:
                     print(f"❌ Chyba při odesílání dat: {e}")
 
