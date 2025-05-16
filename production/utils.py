@@ -43,19 +43,3 @@ def handle_incoming_message(message):
             print(f"MAC address {mac_address} is not nearby.")
     except Exception as e:
         print(f"Error handling the message: {e}")
-import asyncio
-
-async def handle_message(device_address, uuid):
-    """
-    Process the received message and send it for further processing.
-    """
-    print(f"Received message from device: {device_address}, UUID: {uuid}")
-    # Placeholder for further processing logic
-# Placeholder for uuid_uzivatele
-uuid_uzivatele = "default-uuid"
-def normalize_mac(mac):
-    """
-    Normalize a MAC address by removing non-hexadecimal characters and converting to uppercase.
-    """
-    import re
-    return re.sub(r'[^A-Fa-f0-9]', '', mac).upper()

@@ -2,12 +2,12 @@ import asyncio
 from bleak import BleakScanner, BleakClient
 import porovnani
 
-async def handle_message(device_address, uuid):
+async def handle_message(device_address, uuid_uzivatele):
     """
     Process the received message and send it to porovnani.py for further processing.
     """
-    print(f"Received message from device: {device_address}, UUID: {uuid}")
-    porovnani.verify_device(device_address, uuid)
+    print(f"Received message from device: {device_address}, UUID: {uuid_uzivatele}")
+    porovnani.verify_device(device_address, uuid_uzivatele)
 
 async def main():
     """
@@ -27,8 +27,8 @@ async def main():
                 # Decode the 32-bit message
                 message = int.from_bytes(value, byteorder='little')
                 device_address = device.address
-                uuid = message & 0xFFFFFFFF  # Extract UUID from the message
-                asyncio.create_task(handle_message(device_address, uuid))
+                uuid_uzivatele = message & 0xFFFFFFFF  # Extract UUID from the message
+                asyncio.create_task(handle_message(device_address, uuid_uzivatele))
             except Exception as e:
                 print(f"Error processing message: {e}")
 
